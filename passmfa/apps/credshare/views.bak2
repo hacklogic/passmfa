@@ -1,0 +1,112 @@
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+
+from django.views.generic import TemplateView
+from web_project import TemplateLayout
+from web_project.template_helpers.theme import TemplateHelper
+
+from .models import User, Application, TwoFactorAuth, Department, UserDepartment
+
+
+
+class LoginView(TemplateView):
+    template_name = 'auth_login_basic.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        user = self.request.user
+        if not self.request.user.is_authenticated:
+            context['user'] = user
+            context['applications'] = user.application_set.all()
+            context['two_factor_auth'] = user.two_factor_auth_set.all()
+            context['departments'] = user.departments.all()
+            context['all_departments'] = Department.objects.all()
+            context['all_users'] = User.objects.all()
+        context.update({"layout_path": TemplateHelper.set_layout("layout_blank.html", context),})
+        return context
+
+    def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            user = request.user
+            user.address = request.POST.get('address')
+            user.gender = request.POST.get('gender')
+            user.save()
+
+        applications = {}
+        for key in request.POST.keys():
+            if key.startswith('applications'):
+                app_id = key.split('_')[1]
+                if app_id not in applications:
+                    applications[app_id] = {
+                        'username': '',
+                        'password': '',
+                        'departments': [],
+                        'users': []
+                    }
+                if key.endswith('username'):
+                    username, password = request.POST[key].split(',')
+                    applications[app_id]['username'] = username
+                    applications[app_id]['password'] = password
+                elif key.endswith('departments'):
+                    applications[app_id]['departments'].append(int(request.POST[key]))
+                elif key.endswith('users'):
+                    applications[app_id]['users'].append(int(request.POST[key]))
+
+        for app_id, app_data in applications.items():
+            application = Application.objects.get(id=app_id)
+            application.username = app_data['username']
+            application.password = app_data['password']
+            application.departments.set(app_data['departments'])
+            application.shared_users.set(app_data['users'])
+            application.save()
+
+        two_factor_auths = {}
+        for key in request.POST.keys():
+            if key.startswith('two_factor_auth'):
+                tfa_id = key.split('_')[2]
+                if tfa_id not in two_factor_auths:
+                    two_factor_auths[tfa_id] = {
+                        'code': '',
+                        'departments': [],
+                        'users': []
+                    }
+                if key.endswith('code'):
+                    two_factor_auths[tfa_id]['code'] = request.POST[key]
+                elif key.endswith('departments'):
+                    two_factor_auths[tfa_id]['departments'].append(int(request.POST[key]))
+                elif key.endswith('users'):
+                    two_factor_auths[tfa_id]['users'].append(int(request.POST[key]))
+
+        for tfa_id, tfa_data in two_factor_auths.items():
+            two_factor_auth = TwoFactorAuth.objects.get(id=tfa_id)
+            two_factor_auth.code = tfa_data['code']
+            two_factor_auth.departments.set(tfa_data['departments'])
+            two_factor_auth.shared_users.set(tfa_data['users'])
+            two_factor_auth.save()
+
+        selected_departments = [int(d) for d in request.POST.getlist('departments')]
+        user.departments.set(selected_departments)
+
+        return self.render_to_response(self.get_context_data(**kwargs))
+class Test_View(TemplateView):
+    # Predefined function
+    def get_context_data(self, **kwargs):
+        # A function to init the global layout. It is defined in web_project/__init__.py file
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        return context
+
+class CredView(TemplateView):
+    def get_context_data(self, **kwargs):
+        # A function to init the global layout. It is defined in web_project/__init__.py file
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        onecp = CredPass(user_name='abc', pass_word='123456', twofa='123123',ispassword=True)
+        onecp.save()
+
+        cps = CredPass.objects.all()
+        print(cps)
+        context['cps'] = cps
+        return context
+    #template_name = 'test.html'
+
+

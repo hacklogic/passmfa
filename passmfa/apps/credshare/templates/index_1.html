@@ -1,0 +1,114 @@
+{% extends layout_path %}
+
+{% load static %}
+{% load i18n %}
+
+{% block title %}Tables - Basic Tables{% endblock %}
+
+{% block content %}
+<h4 class="py-3 mb-4">
+  <span class="text-muted fw-light">Tables /</span> Basic Tables
+</h4>
+<!-- Basic Bootstrap Table -->
+    <a href="add_credentials.html" class="btn btn-primary mb-3">Add New Credentials</a>
+<div class="card">
+  <h5 class="card-header">Table Basic</h5>
+  <div class="table-responsive text-nowrap">
+    <table class="table">
+      <thead>
+        <tr>
+            <th>AppName</th>
+           <th>URL</th>
+          <th>Username</th>
+          <th>Password</th>
+          <th>2FA</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody class="table-border-bottom-0">
+
+      {% for credential in credentials %}
+                <tr>
+                    <td>{{ credential.app_name }}</td>
+                    <td><a href="{{ credential.app_url }}" target="_blank">{{ credential.app_url }}</a></td>
+                    <td>{{ credential.app_username }}</td>
+
+           <td>
+            <div class="form-password-toggle">
+          <div class="input-group">
+            <input type="password" class="form-control" id="app-password-{{ credential.id }}" value="{{ credential.app_password }}" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="basic-default-password2"  />
+            <span id="basic-default-password2" class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+          </div>
+        </div>
+        </td>
+          <td>
+          <div class="input-group">
+              <input type="text" class="form-control otp-input" id="otpInput-{{ credential.id }}" value="" placeholder="******" disabled >
+          <button class="btn btn-primary" type="button" id="otpButton-{{ credential.id }}" onclick="refreshOTP({{ credential.id }})" >Refresh</button>
+               </div>
+        </td>
+
+          <td>
+            <div class="dropdown">
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
+              <div class="dropdown-menu">
+
+                <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-1"></i> Edit</a>
+                  <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-1"></i> Share</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash me-1"></i> Delete</a>
+              </div>
+            </div>
+          </td>
+        </tr>
+       {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<!--/ Basic Bootstrap Table -->
+
+<hr class="my-5">
+
+<script >
+
+let otpTimeRemaining = 30;
+
+function refreshOTP(id) {
+    fetch('/api/get_otp/'+id+'/', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("otpInput-" + id).value = data.otp;
+        document.getElementById("otpInput-" + id).disabled = false;
+        setTimeout(function() {
+            document.getElementById("otpInput-" + id).value = '';
+            document.getElementById("otpInput-" + id).disabled = true;
+        }.bind(this), otpTimeRemaining*1000);
+
+    })
+    .catch(error => console.error(error));
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+
+
+{% endblock %}

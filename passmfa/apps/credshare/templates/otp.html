@@ -1,0 +1,69 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Input</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+</head>
+<body>
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="otpInput">请输入6位OTP数字:</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="otpInput" maxlength="6" placeholder="******" disabled>
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" id="refreshOTPBtn">
+                                <i class="fas fa-sync-alt"></i> 刷新
+                            </button>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted" id="otpTimer">60 秒后失效</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script >
+
+        let otpTimer;
+let otpTimeRemaining = 60;
+
+function generateOTP() {
+    // 生成6位随机OTP数字
+    return Math.floor(100000 + Math.random() * 900000);
+}
+
+function startOTPTimer() {
+    otpTimer = setInterval(() => {
+        otpTimeRemaining--;
+        document.getElementById('otpTimer').textContent = `${otpTimeRemaining} 秒后失效`;
+
+        if (otpTimeRemaining === 0) {
+            clearInterval(otpTimer);
+            document.getElementById('otpInput').value = '';
+            document.getElementById('otpInput').disabled = true;
+        }
+    }, 1000);
+}
+
+function refreshOTP() {
+    const newOTP = generateOTP();
+    document.getElementById('otpInput').value = newOTP;
+    document.getElementById('otpInput').disabled = false;
+    otpTimeRemaining = 60;
+    startOTPTimer();
+}
+
+document.getElementById('refreshOTPBtn').addEventListener('click', refreshOTP);
+
+// 初始化OTP
+//refreshOTP();
+    </script>
+</body>
+</html>

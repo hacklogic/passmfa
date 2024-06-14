@@ -1,0 +1,123 @@
+{% extends layout_path %}
+
+{% load static %}
+{% load i18n %}
+
+{% block title %}Tables - Basic Tables{% endblock %}
+
+{% block content %}
+<h4 class="py-3 mb-4">
+  <span class="text-muted fw-light">Tables /</span> Basic Tables
+</h4>
+<!-- Basic Bootstrap Table -->
+    <a href="add_credentials.html" class="btn btn-primary mb-3">Add New Credentials</a>
+<div class="card">
+  <h5 class="card-header">Table Basic</h5>
+  <div class="table-responsive text-nowrap">
+    <table class="table">
+      <thead>
+        <tr>
+            <th>AppName</th>
+           <th>URL</th>
+          <th>Username</th>
+          <th>Password</th>
+          <th>2FA</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody class="table-border-bottom-0">
+
+      {% for credential in credentials %}
+                <tr>
+                    <td>{{ credential.app_name }}</td>
+                    <td><a href="{{ credential.app_url }}" target="_blank">{{ credential.app_url }}</a></td>
+                    <td>{{ credential.app_username }}</td>
+
+           <td>
+            <div class="form-password-toggle">
+          <div class="input-group">
+            <input type="password" class="form-control" id="app-password-{{ credential.id }}" value="{{ credential.app_password }}" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="basic-default-password2"  />
+            <span id="basic-default-password2" class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+          </div>
+        </div>
+        </td>
+          <td>
+          <div class="input-group">
+              <input type="text" class="form-control otp-input" id="otpInput-{{ credential.id }}" value="" placeholder="******" disabled >
+          <button class="btn btn-outline-primary otp-button" type="button" id="refreshOTPBtn-{{ credential.id }}"  >Refresh</button>
+               </div>
+        </td>
+
+          <td>
+            <div class="dropdown">
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
+              <div class="dropdown-menu">
+
+                <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-1"></i> Edit</a>
+                  <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-1"></i> Share</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash me-1"></i> Delete</a>
+              </div>
+            </div>
+          </td>
+        </tr>
+       {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<!--/ Basic Bootstrap Table -->
+
+<hr class="my-5">
+
+<script >
+
+    // 选择所有按钮元素和输入框元素
+    var buttons = document.querySelectorAll('.otp-button');
+    var inputs = document.querySelectorAll('.otp-input');
+
+    // 遍历每个按钮和输入框
+    buttons.forEach(function(button, index) {
+      var isRed = false;
+      var timerId;
+
+      // 添加点击事件监听器
+      button.addEventListener('click', function() {
+        // 如果按钮颜色为蓝色,将其改为红色并显示输入框
+        if (!isRed) {
+          this.style.backgroundColor = 'red';
+          this.classList.add('disabled');
+          inputs[index].value = inputs[index].id;
+          isRed = true;
+
+          // 启动定时器,30 秒后将按钮颜色改回蓝色并隐藏输入框
+          timerId = setInterval(function() {
+            this.style.backgroundColor = 'blue';
+            this.classList.remove('disabled');
+            inputs[index].style.display = 'none';
+            isRed = false;
+            clearInterval(timerId);
+          }.bind(this), 30000);
+        }
+        // 如果按钮颜色为红色,重新启动定时器
+        else {
+          clearInterval(timerId);
+          this.classList.add('disabled');
+          inputs[index].style.display = 'block';
+          inputs[index].value = Math.floor(Math.random() * 100);
+          timerId = setInterval(function() {
+            this.style.backgroundColor = 'blue';
+            this.classList.remove('disabled');
+            inputs[index].style.display = 'none';
+            isRed = false;
+            clearInterval(timerId);
+          }.bind(this), 30000);
+        }
+      });
+    });
+
+
+
+// 初始化OTP
+//refreshOTP();
+    </script>
+{% endblock %}

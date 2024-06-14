@@ -1,0 +1,41 @@
+<!-- phone_number_share.html -->
+
+<h1>Phone Number Share</h1>
+
+<h2>Phone Numbers:</h2>
+<ul>
+  {% for phone_number in phone_numbers %}
+    <li>{{ phone_number.number }}</li>
+  {% empty %}
+    <li>No phone numbers found.</li>
+  {% endfor %}
+</ul>
+
+<h2>Groups:</h2>
+<ul>
+  {% for group in groups %}
+    <li>{{ group.name }}</li>
+  {% empty %}
+    <li>No groups found.</li>
+  {% endfor %}
+</ul>
+
+<h2>Share Phone Number:</h2>
+<form method="POST" action="{% url 'phone_number_share' %}">
+  {% csrf_token %}
+  <label for="phone_number_id">Select Phone Number:</label>
+  <select name="phone_number_id">
+    {% for phone_number in phone_numbers %}
+      <option value="{{ phone_number.id }}">{{ phone_number.number }}</option>
+    {% endfor %}
+  </select>
+  <br>
+  <label for="group_id">Select Group:</label>
+  <select name="group_id">
+    {% for group in groups %}
+      <option value="{{ group.id }}">{{ group.name }}</option>
+    {% endfor %}
+  </select>
+  <br>
+  <button type="submit">Share</button>
+</form>

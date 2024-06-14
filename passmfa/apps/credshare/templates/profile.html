@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>User Profile</h1>
+
+<form method="post">
+  {% csrf_token %}
+  <div>
+    <label for="address">Address:</label>
+    <input type="text" id="address" name="address" value="{{ user.address }}">
+  </div>
+  <div>
+    <label for="gender">Gender:</label>
+    <select id="gender" name="gender">
+      <option value="" {% if not user.gender %}selected{% endif %}>---------</option>
+      <option value="male" {% if user.gender == 'male' %}selected{% endif %}>Male</option>
+      <option value="female" {% if user.gender == 'female' %}selected{% endif %}>Female</option>
+    </select>
+  </div>
+
+  <h2>Applications</h2>
+  {% for application in applications %}
+  <div>
+    <label for="app_{{ application.id }}_username">Username:</label>
+    <input type="text" id="app_{{ application.id }}_username" name="applications" value="{{ application.username }},{{ application.password }}">
+    <label for="app_{{ application.id }}_departments">Share with departments:</label>
+    {% for department in all_departments %}
+    <input type="checkbox" id="app_{{ application.id }}_department_{{ department.id }}" name="app_{{ application.id }}_departments" value="{{ department.id }}" {% if department in application.departments.all %}checked{% endif %}>
+    <label for="app_{{ application.id }}_department_{{ department.id }}">{{ department.name }}</label>
+    {% endfor %}
+    <label for="app_{{ application.id }}_users">Share with users:</label>
+    {% for shared_user in application.shared_users.all %}
+    <input type="checkbox" id="app_{{ application.id }}_user_{{ shared_user.id }}" name="app_{{ application.id }}_users" value="{{ shared_user.id }}" checked>
+    <label for="app_{{ application.id }}_user_{{ shared_user.id }}">{{ shared_user.username }}</label>
+    {% endfor %}
+  </div>
+  {% endfor %}
+  <button type="button" onclick="addApplication()">Add Application</button>
+
+  <h2>Two-Factor Authentication</h2>
+  {% for two_factor in two_factor_auth %}
+  <div>
+    <label for="tfa_{{ two_factor.id }}_code">Code:</label>
+    <input type="text" id="tfa_{{ two_factor.id }}_code" name="two_factor_auth" value="{{ two_factor.code }}">
+    <label for="tfa_{{ two_factor.id }}_departments">Share with departments:</label>
+    {% for department in all_departments %}
+    <input type="checkbox" id="tfa_{{ two_factor.id }}_department_{{ department.id }}" name="tfa_{{ two_factor.id }}_departments" value="{{ department.id }}" {% if department in two_factor.departments.all %}checked{% endif %}>
+    <label for="tfa_{{ two_factor.id }}_department_{{ department.id }}">{{ department.name }}</label>
+    {% endfor %}
+    <label for="tfa_{{ two_factor.id }}_users">Share with users:</label>
+    {% for shared_user in two_factor.shared_users.all %}
+    <input type="checkbox" id="tfa_{{ two_factor.id }}_user_{{ shared_user.id }}" name="tfa_{{ two_factor.id }}_users" value="{{ shared_user.id }}" checked>
+    <label for="tfa_{{ two_factor.id }}_user_{{ shared_user.id }}">{{ shared_user.username }}</label>
+    {% endfor %}
+  </div>
+  {% endfor %}
+  <button type="button" onclick="addTwoFactorAuth()">Add Two-Factor Authentication</button>
+
+  <h2>Departments</h2>
+  {% for department in departments %}
+  <div>
+    <input type="checkbox" id="department_{{ department.id }}" name="departments" value="{{ department.id }}" checked>
+    <label for="department_{{ department.id }}">{{ department.name }}</label>
+  </div>
+  {% endfor %}
+  {% for department in all_departments %}
+  {% if department not in departments %}
+  <div>
+    <input type="checkbox" id="department_{{ department.id }}" name="departments" value="{{ department.id }}">
+    <label for="department_{{ department.id }}">{{ department.name }}</label>
+  </div>
+  {% endif %}
+  {% endfor %}
+
+  <button type="submit">Save</button>
+</form>
+
+<script>
+  let applicationIndex = {{ applications|length }};
+  let twoFactorAuthIndex = {{ two_factor_auth|length }};
+
+  function addApplication() {
+    const applicationsDiv = document.querySelector('#applications');
+    const newApplicationDiv = document.createElement('div');
+    newApplicationDiv.innerHTML = `
+      <label for="app_${applicationIndex}_username">Username:</label>
+      <input type="text" id="app_${applicationIndex}_username" name="applications" value="">
+      <label for="app_${applicationIndex}_departments">Share with departments:</label>
+      {% for department in all_departments %}
+      <input type="checkbox" id="app_${applicationIndex}_department_{{ department.id }}" name="app_${applicationIndex}_departments" value="{{ department.id }}">
+      <label for="app_${applicationIndex}_department_{{ department.id }}">{{ department.name }}</label>
+      {% endfor %}
+      <label for="app_${applicationIndex}_users">Share with users:</label>
+      {% for user in all_users %}
+      <input type="checkbox" id="app_${applicationIndex}_user_{{ user.id }}" name="app_${applicationIndex}_users" value="{{ user.id }}">
+      <label for="app_${applicationIndex}_user_{{ user.id }}">{{ user.username }}</label>
+      {% endfor %}
+    `;
+    applicationsDiv.appendChild(newApplicationDiv);
+    applicationIndex++;
+  }
+
+  function addTwoFactorAuth() {
+    const twoFactorAuthDiv = document.querySelector('#two-factor-auth');
+    const newTwoFactorAuthDiv = document.createElement('div');
+    newTwoFactorAuthDiv.innerHTML = `
+      <label for="tfa_${twoFactorAuthIndex}_code">Code:</label>
+      <input type="text" id="tfa_${twoFactorAuthIndex}_code" name="two_factor_auth" value="">
+      <label for="tfa_${twoFactorAuthIndex}_departments">Share with departments:</label>
+      {% for department in all_departments %}
+      <input type="checkbox" id="tfa_${twoFactorAuthIndex}_department_{{ department.id }}" name="tfa_${twoFactorAuthIndex}_departments" value="{{ department.id }}">
+      <label for="tfa_${twoFactorAuthIndex}_department_{{ department.id }}">{{ department.name }}</label>
+      {% endfor %}
+      <label for="tfa_${twoFactorAuthIndex}_users">Share with users:</label>
+      {% for user in all_users %}
+      <input type="checkbox" id="tfa_${twoFactorAuthIndex}_user_{{ user.id }}" name="tfa_${twoFactorAuthIndex}_users" value="{{ user.id }}">
+      <label for="tfa_${twoFactorAuthIndex}_user_{{ user.id }}">{{ user.username }}</label>
+      {% endfor %}
+    `;
+    twoFactorAuthDiv.appendChild(newTwoFactorAuthDiv);
+    twoFactorAuthIndex++;
+  }
+</script>
+{% endblock %}

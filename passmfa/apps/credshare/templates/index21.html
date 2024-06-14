@@ -1,0 +1,232 @@
+{% extends layout_path %}
+
+{% load static %}
+{% load i18n %}
+
+{% block title %}Tables - Basic Tables{% endblock %}
+
+{% block content %}
+<h4 class="py-3 mb-4">
+  <span class="text-muted fw-light">Tables /</span> Basic Tables
+</h4>
+<!-- Basic Bootstrap Table -->
+<div class="card">
+  <h5 class="card-header">Table Basic</h5>
+  <div class="table-responsive text-nowrap">
+    <table class="table">
+      <thead>
+        <tr>
+            <th>AppName</th>
+           <th>URL</th>
+          <th>Username</th>
+          <th>Password</th>
+          <th>2FA</th>
+          <th>Actions</th>
+
+
+        </tr>
+      </thead>
+      <tbody class="table-border-bottom-0">
+        <tr>
+          <td><i class="bx bxl-angular bx-sm text-danger me-3"></i> <span class="fw-medium">Angular Project</span></td>
+          <td>Albert Cook</td>
+            <td>www.aws.com</td>
+           <td>
+            <div class="form-password-toggle">
+          <div class="input-group">
+            <input type="password" class="form-control" id="basic-default-password12" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="basic-default-password2" value="aaaaabbbccc" />
+            <span id="basic-default-password2" class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+          </div>
+        </div>
+        </td>
+          <td>
+          <div class="input-group">
+          <input type="text" class="form-control" id="otpInput-1"  placeholder="******" disabled >
+          <button class="btn btn-outline-primary" type="button" id="refreshOTPBtn" >Refresh</button>
+               </div>
+        </td>
+
+          <td>
+            <div class="dropdown">
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-1"></i> Edit</a>
+                  <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-1"></i> Share</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash me-1"></i> Delete</a>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><i class="bx bxl-react bx-sm text-info me-3"></i> <span class="fw-medium">React Project</span></td>
+          <td>Barry Hunter</td>
+          <td>
+            <ul class="list-unstyled users-list m-0 avatar-group d-flex align-items-center">
+              <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Lilian Fuller">
+                <img src="{% static 'img/avatars/5.png' %}" alt="Avatar" class="rounded-circle">
+              </li>
+              <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Sophia Wilkerson">
+                <img src="{% static 'img/avatars/6.png' %}" alt="Avatar" class="rounded-circle">
+              </li>
+              <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Christina Parker">
+                <img src="{% static 'img/avatars/7.png' %}" alt="Avatar" class="rounded-circle">
+              </li>
+            </ul>
+          </td>
+          <td><span class="badge bg-label-success me-1">Completed</span></td>
+          <td>
+            <div class="dropdown">
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-2"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash me-2"></i> Delete</a>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><i class="bx bxl-vuejs bx-sm text-success me-3"></i> <span class="fw-medium">VueJs Project</span></td>
+          <td>Trevor Baker</td>
+          <td>
+            <ul class="list-unstyled users-list m-0 avatar-group d-flex align-items-center">
+              <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Lilian Fuller">
+                <img src="{% static 'img/avatars/5.png' %}" alt="Avatar" class="rounded-circle">
+              </li>
+              <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Sophia Wilkerson">
+                <img src="{% static 'img/avatars/6.png' %}" alt="Avatar" class="rounded-circle">
+              </li>
+              <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Christina Parker">
+                <img src="{% static 'img/avatars/7.png' %}" alt="Avatar" class="rounded-circle">
+              </li>
+            </ul>
+          </td>
+          <td><span class="badge bg-label-info me-1">Scheduled</span></td>
+          <td>
+            <div class="dropdown">
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-2"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash me-2"></i> Delete</a>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><i class="bx bxl-bootstrap bx-sm text-primary me-3"></i> <span class="fw-medium">Bootstrap Project</span></td>
+          <td>Jerry Milton</td>
+          <td>
+            <ul class="list-unstyled users-list m-0 avatar-group d-flex align-items-center">
+              <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Lilian Fuller">
+                <img src="{% static 'img/avatars/5.png' %}" alt="Avatar" class="rounded-circle">
+              </li>
+              <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Sophia Wilkerson">
+                <img src="{% static 'img/avatars/6.png' %}" alt="Avatar" class="rounded-circle">
+              </li>
+              <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Christina Parker">
+                <img src="{% static 'img/avatars/7.png' %}" alt="Avatar" class="rounded-circle">
+              </li>
+            </ul>
+          </td>
+          <td><span class="badge bg-label-warning me-1">Pending</span></td>
+          <td>
+            <div class="dropdown">
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-2"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash me-2"></i> Delete</a>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<!--/ Basic Bootstrap Table -->
+
+<hr class="my-5">
+
+<script >
+
+let otpTimer;
+let otpTimeRemaining = 30;
+function generateOTP2() {
+    // 生成6位随机OTP数字
+    return Math.floor(100000 + Math.random() * 900000);
+}
+
+function refreshOTP() {
+    fetch('/api/get_2fa_code/1/', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('otpInput-1').value = data.otp;
+        document.getElementById('otpInput-1').disabled = false;
+         if (!otpTimer) {
+            otpTimer = setInterval(otpTimeout, otpTimeRemaining*1000);
+          }
+    })
+    .catch(error => console.error(error));
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+
+function fetch2FACode(id) {
+            fetch(`/api/get_2fa_code/${id}/`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("otpInput-1").value = data.two_fa_code;
+                })
+                .catch(error => console.error('Error fetching 2FA code:', error));
+        }
+function otpTimeout() {
+    document.getElementById('otpInput-1').value = '';
+    document.getElementById('otpInput-1').disabled = true;
+}
+
+function startOTPTimer() {
+    otpTimer = setInterval(() => {
+        otpTimeRemaining--;
+        //document.getElementById('otpTimer').textContent = `${otpTimeRemaining} 秒后失效`;
+        if (otpTimeRemaining === 0) {
+            clearInterval(otpTimer);
+            document.getElementById('otpInput-1').value = '';
+            document.getElementById('otpInput-1').disabled = true;
+        }
+    }, 1000);
+}
+
+function refreshOTP1() {
+    //const newOTP = generateOTP();
+    const newOTP = refreshOTP();
+    //document.getElementById('otpInput-1').value = newOTP;
+    //document.getElementById('otpInput-1').disabled = false;
+    otpTimeRemaining = 60;
+    startOTPTimer();
+}
+
+document.getElementById('refreshOTPBtn').addEventListener('click', refreshOTP);
+
+// 初始化OTP
+//refreshOTP();
+    </script>
+{% endblock %}

@@ -1,0 +1,45 @@
+from your_app.models import YourModel
+from django.shortcuts import render
+
+def your_view(request):
+    # Retrieve data from the model
+    queryset = YourModel.objects.all()
+
+    # Perform operations on the model
+    instance = YourModel.objects.get(id=1)
+    instance.some_field = 'New value'
+    instance.save()
+
+    # Render the view
+    return render(request, 'your_template.html', {'queryset': queryset})
+
+from django.views.generic import TemplateView
+from web_project import TemplateLayout
+from credshare.models import CustomUser
+
+"""
+This file is a view controller for multiple pages as a module.
+Here you can override the page view layout.
+Refer to test/urls.py file for more pages.
+"""
+
+
+class testView(TemplateView):
+    # Predefined function
+    def get_context_data(self, **kwargs):
+        # A function to init the global layout. It is defined in web_project/__init__.py file
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        return context
+
+
+class CredView(TemplateView):
+    user = CustomUser.objects.get(username='example_user')
+    phone_numbers = user.phone_numbers.all()
+
+    for phone_number in phone_numbers:
+        print(phone_number.number)
+    template_name = 'test.html'
+
+'''
+
+'''
