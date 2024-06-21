@@ -126,8 +126,10 @@ def get_otp(request, credential_id):
 
 def credentials_list(request):
     credentials = AppCredentials.objects.filter(app_owner=request.user)
-    shared_credentials = AppCredentials.objects.filter(shared_with_users=request.user) | AppCredentials.objects.filter(shared_with_groups__in=request.user.groups.all()).distinct()
-    return render(request, 'credentials_list.html', {'credentials': credentials, 'shared_credentials': shared_credentials})
+    #shared_credentials = AppCredentials.objects.filter(shared_with_users=request.user) | AppCredentials.objects.filter(shared_with_groups__in=request.user.groups.all()).distinct()
+    #return render(request, 'credentials_list.html', {'credentials': credentials, 'shared_credentials': shared_credentials})
+    return render(request, 'credentials_list.html',{'credentials': credentials})
+
 
 @csrf_exempt
 def read_qrcode(request):
@@ -191,14 +193,18 @@ def edit_credentials(request, id):
 
 
 
-class ShareView(TemplateView):
-    template_name = 'share.html'
+class SharetomeView(TemplateView):
+    template_name = 'sharetome.html'
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
         #context = super().get_context_data(**kwargs)
         # Get URL parameters
         user_id = kwargs.get('user_id1')
         page = kwargs.get('page')
+
+        # Get GET data
+        #name = self.request.GET.get('name')
+        #email = self.request.GET.get('email')
 
         # Add URL parameters to the context
         context['user_id'] = user_id
@@ -234,13 +240,30 @@ def delete_credentials(request, id):
         else:
             return JsonResponse({'error': 'Invalid data'}, status=400)
 
+@csrf_exempt
+def getshare_credentials(request, id):
+    if request.method == 'GET':
+        credentials = AppCredentials.objects.get(app_owner=request.user, id=id)
+        shared_credentials = AppCredentials.objects.filter(shared_with_users=self.request.user) | AppCredentials.objects.filter(shared_with_groups__in=self.request.user.groups.all()).distinct()
 
-    credentials = get_object_or_404(AppCredentials, id=id, app_owner=request.user)
-    credentials.delete()
-    return redirect('credentials_list')
+        if credentials:
+            return JsonResponse({'success': True, 'message': 'Data delete successfully'})
 
-@login_required
-def share_credentials(request, id):
+    pass
+
+
+@csrf_exempt
+def confirmshare_credentials(request, id):
+    if request.method == 'GET':
+        credentials = AppCredentials.objects.get(app_owner=request.user, id=id)
+        if credentials:
+            print(credentials)
+            #return redirect('index')
+            return JsonResponse({'success': True, 'message': 'Data delete successfully'})
+        else:
+            return JsonResponse({'error': 'Invalid data'}, status=400)
+
+
     credentials = get_object_or_404(AppCredentials, id=id, app_owner=request.user)
     if request.method == 'POST':
         form = ShareCredentialsForm(request.POST, instance=credentials)

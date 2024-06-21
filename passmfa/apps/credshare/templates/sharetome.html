@@ -155,7 +155,7 @@
         <div class="demo-inline-spacing mt-3">
 
           <div class="container mt-5">
-  <select class="selectpicker" multiple aria-label="size 3 select example" id="grouppicker">
+  <select class="selectpicker" multiple aria-label="size 3 select example" id="q">
     <option value="1">One</option>
     <option value="2">Two</option>
     <option value="3">Three</option>
@@ -263,6 +263,7 @@
 
 <script type="text/javascript">
 
+$('select').selectpicker();
 
 async function edit_cred(id){
     const response =  await fetch('/edit/'+id+'/', {
@@ -280,30 +281,28 @@ async function edit_cred(id){
     }
 }
 
-//$('#userpicker').selectpicker();
-//$('#grouppicker').selectpicker();
+
 function share_cred(id){
       const modal = new Promise(function(resolve, reject){
                  $('#shareModal').modal('show');
-
                  $('#confirmShareBtn').click(function(){
-                     //resolve("user clicked");
-                     $('#shareModal').modal('hide');
+                        //resolve("user clicked");
+                        $('#shareModal').modal('hide');
 
-                     fetch('/confirmshare/'+id+'/', {
-                            method: 'GET',
-                     })
-                     .then(response => {
-                        if (response.ok) {
-                          // Modal can be closed or other actions can be taken
-                            $('#success_alert').show();
-                            $('#success_detail').text("New Credentials Have Been Shared.");
-                             setTimeout(function() {$('#success_alert').hide();window.location.reload();}, 2000); // 2 seconds
-                            console.log('Deletion success');
-                        } else {
-                          console.error('Deletion failed,no response');
-                        }
-                     })
+            fetch('/shareto/'+id+'/', {
+                    method: 'GET',
+            })
+            .then(response => {
+                if (response.ok) {
+                  // Modal can be closed or other actions can be taken
+                    $('#success_alert').show();
+                    $('#success_detail').text("New Credentials Have Been Shared.");
+                     setTimeout(function() {$('#success_alert').hide();window.location.reload();}, 2000); // 2 seconds
+                    console.log('Deletion success');
+                } else {
+                  console.error('Deletion failed,no response');
+                }
+            })
        })
     })
  }

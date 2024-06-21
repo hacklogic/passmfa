@@ -25,7 +25,7 @@ refresh_time = totp.interval
 print(refresh_time)
 
 '''
-
+'''
 from PIL import Image
 from pyzbar.pyzbar import decode
 #data = decode(Image.open('QR_E0DA474F-36F6-474C-9E26-6CF8D3D749EA.png'))
@@ -33,3 +33,18 @@ data = decode(Image.open('testqr.png'))
 
 print(data)
 print(data[0].data.decode('utf-8'))
+'''
+
+
+from .apps import credshare
+
+#from .models import AppCredentials
+'''
+credentials = AppCredentials.objects.get(id=18)
+print(credentials)
+user = User.objects.get(id=2)
+credentials.shared_with_users.add(user)
+
+gp = Group.objects.get(id=1)
+credentials.shared_with_groups.add(gp)
+'''
