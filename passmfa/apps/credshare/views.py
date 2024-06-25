@@ -199,18 +199,42 @@ class SharetomeView(TemplateView):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
         #context = super().get_context_data(**kwargs)
         # Get URL parameters
-        user_id = kwargs.get('user_id1')
-        page = kwargs.get('page')
+        #user_id = kwargs.get('user_id1')
+        #page = kwargs.get('page')
+
+        #shared_credentials = AppCredentials.objects.filter(shared_with_users=self.request.user) | AppCredentials.objects.filter(shared_with_groups__in=self.request.user.groups.all()).distinct()
+
+        shared_tome_credentials = AppCredentials.objects.filter(shared_with_users=self.request.user)
+        shared_togroup_credentials = AppCredentials.objects.filter(shared_with_groups__in=self.request.user.groups.all()).distinct()
+
+
+        # Prepare a list with credentials and their corresponding groups
+        credentials_with_groups = []
+        for credential in shared_togroup_credentials:
+            #groups = credential.shared_with_groups.all()
+            groups = self.request.user.groups.all()
+            for group in groups:
+                credentials_with_groups.append({
+                    'credential': credential,
+                    'group': group
+                })
+
+        for credential in shared_tome_credentials:
+            print(credential)
+        for credential in shared_togroup_credentials:
+            print(credential)
+
 
         # Get GET data
         #name = self.request.GET.get('name')
         #email = self.request.GET.get('email')
 
         # Add URL parameters to the context
-        context['user_id'] = user_id
-        context['page'] = page
-        return context
+        context['share_me'] = shared_tome_credentials
+        context['share_group'] = credentials_with_groups
 
+        return context
+'''
     def post(self, request, *args, **kwargs):
         # Get the POST data
         name = request.POST.get('name')
@@ -225,7 +249,7 @@ class SharetomeView(TemplateView):
 
         # Return the template response
         return self.render_to_response(self.get_context_data(**kwargs))
-
+'''
 
 
 @csrf_exempt
@@ -234,6 +258,7 @@ def delete_credentials(request, id):
         credentials = AppCredentials.objects.get(app_owner=request.user, id=id)
         if credentials:
             print(credentials)
+
             credentials.delete()
             #return redirect('index')
             return JsonResponse({'success': True, 'message': 'Data delete successfully'})
@@ -243,8 +268,10 @@ def delete_credentials(request, id):
 @csrf_exempt
 def getshare_credentials(request, id):
     if request.method == 'GET':
-        credentials = AppCredentials.objects.get(app_owner=request.user, id=id)
-        shared_credentials = AppCredentials.objects.filter(shared_with_users=self.request.user) | AppCredentials.objects.filter(shared_with_groups__in=self.request.user.groups.all()).distinct()
+        #credentials = AppCredentials.objects.get(app_owner=request.user, id=id)
+
+        shared_tome_credentials = AppCredentials.objects.filter(shared_with_users=request.user)
+        shared_togroup_credentials =  AppCredentials.objects.filter(shared_with_groups__in= request.user.groups.all()).distinct()
 
         if credentials:
             return JsonResponse({'success': True, 'message': 'Data delete successfully'})

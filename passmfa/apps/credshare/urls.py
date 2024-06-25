@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import LoginView,IndexView,get_otp
-from .views import credentials_list, add_credentials, edit_credentials, delete_credentials,read_qrcode,confirmshare_credentials,SharetomeView
+from .views import credentials_list, add_credentials, edit_credentials, delete_credentials,read_qrcode,confirmshare_credentials,SharetomeView,getshare_credentials
 
 
 
@@ -22,9 +22,9 @@ urlpatterns = [
     path('edit/<int:id>/', edit_credentials, name='edit_credentials'),
     path('delete/<int:id>/', delete_credentials, name='delete_credentials'),
 
-    path('getshare/<int:id>/', getshare_credentials, name='getshare_credentials'),
     path('confirmshare/<int:id>/', confirmshare_credentials, name='confirmshare_credentials'),
 
+    path('getshare/<int:id>/', getshare_credentials, name='getshare_credentials'),
     path('share/', SharetomeView.as_view(template_name="sharetome.html"),name='sharetome'),
     #path("register/",ProfileView.as_view(template_name="profile.html"),),
 
