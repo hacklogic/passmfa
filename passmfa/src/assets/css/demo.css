@@ -10,13 +10,15 @@
 
 .app-brand-logo.demo svg {
   width: 50px;
-  height: 38px;
+  height: 50px;
 }
 
 .app-brand-text.demo {
   font-size: 1.75rem;
   letter-spacing: -0.5px;
-  text-transform: lowercase;
+  color: #696cff;
+  text-transform: capitalize;
+  font-family: Gill Sans, sans-serif;
 }
 
 /* ! For .layout-navbar-fixed added fix padding top to .layout-page */

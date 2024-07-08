@@ -7,11 +7,11 @@
 THEME_VARIABLES = {
     "creator_name": "ThemeSelection",
     "creator_url": "https://themeselection.com/",
-    "template_name": "Pass2FA",
+    "template_name": "PassPrem",
     "template_suffix": "Django Free Admin Template",
     "template_version": "1.0.0",
     "template_free": True,
-    "template_description": "Pass2FA is a modern, clean and fully responsive admin template built with Bootstrap 5, Django 5, HTML, CSS, and JavaScript. It has a huge collection of reusable UI components. It can be used for all types of web applications like System Error pages, Authentication pages, admin dashboard.",
+    "template_description": "PassPrem is a modern, clean and fully responsive admin template built with Bootstrap 5, Django 5, HTML, CSS, and JavaScript. It has a huge collection of reusable UI components. It can be used for all types of web applications like System Error pages, Authentication pages, admin dashboard.",
     "template_keyword": "django, django admin, dashboard, bootstrap 5 dashboard, bootstrap 5 design, bootstrap 5",
     "facebook_url": "https://www.facebook.com/ThemeSelections/",
     "twitter_url": "https://twitter.com/Theme_Selection",

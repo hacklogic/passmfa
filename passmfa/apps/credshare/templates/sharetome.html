@@ -53,13 +53,13 @@
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel1">Delete Confirm</h5>
+                  <h5 class="modal-title" id="exampleModalLabel1">Remove Confirm</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                   <div class="row">
                     <div class="col mb-3">
-                      <label for="nameBasic" class="form-label">confirm delete your credential</label>
+                      <label for="nameBasic" class="form-label">Confirm remove your shared credential</label>
                     </div>
                   </div>
                 </div>
@@ -118,9 +118,8 @@
               <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
               <div class="dropdown-menu">
 
-                <a class="dropdown-item" href="javascript:edit_cred({{ credential.id }});"><i class="bx bx-edit-alt me-1"></i> Edit</a>
-                  <a class="dropdown-item" href="javascript:share_cred({{ credential.id }});"><i class="bx bxs-share-alt me-1"></i> Share</a>
-                <a class="dropdown-item" href="javascript:delete_cred({{ credential.id }});"><i class="bx bx-trash me-1"></i> Delete</a>
+                  <a class="dropdown-item" href="javascript:void(0);" onclick="remove_share({{ credential.id }},0)"><i class="bx bx-trash me-1"></i>Remove Share</a>
+
               </div>
             </div>
           </td>
@@ -153,15 +152,7 @@
         </td>
 
           <td>
-            <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
-              <div class="dropdown-menu">
 
-                <a class="dropdown-item" href="javascript:edit_cred({{ item.credential.id }});"><i class="bx bx-edit-alt me-1"></i> Edit</a>
-                  <a class="dropdown-item" href="javascript:share_cred({{ item.credential.id }});"><i class="bx bxs-share-alt me-1"></i> Share</a>
-                <a class="dropdown-item" href="javascript:delete_cred({{ item.credential.id }});"><i class="bx bx-trash me-1"></i> Delete</a>
-              </div>
-            </div>
           </td>
         </tr>
        {% endfor %}
@@ -176,174 +167,39 @@
 
 <script type="text/javascript">
 
-$('select').selectpicker();
-
-async function edit_cred(id){
-    const response =  await fetch('/edit/'+id+'/', {
-        method: 'GET',
-    });
-    const data = await response.json();
-    if (data) {
-        $("#new-app-name").val(data['app_name']);
-        $("#new-url").val(data['app_url']);
-        $("#new-username").val(data['app_username']);
-        $("#new-password").val(data['app_password']);
-        $("#new-otp-key").val(data['app_two_fa']);
-        $('#basicModal').modal('show');
-
-    }
-}
-
-
-function share_cred(id){
-      const modal = new Promise(function(resolve, reject){
-                 $('#shareModal').modal('show');
-                 $('#confirmShareBtn').click(function(){
-                        //resolve("user clicked");
-                        $('#shareModal').modal('hide');
-
-            fetch('/shareto/'+id+'/', {
-                    method: 'GET',
-            })
-            .then(response => {
-                if (response.ok) {
-                  // Modal can be closed or other actions can be taken
-                    $('#success_alert').show();
-                    $('#success_detail').text("New Credentials Have Been Shared.");
-                     setTimeout(function() {$('#success_alert').hide();window.location.reload();}, 2000); // 2 seconds
-                    console.log('Deletion success');
-                } else {
-                  console.error('Deletion failed,no response');
-                }
-            })
-       })
-    })
- }
-
-function delete_cred(id) {
+function remove_share(id,type) {
     const modal = new Promise(function(resolve, reject){
-          $('#deleteModal').modal('show');
-          $('#confirmDeleteBtn').click(function(){
-              //resolve("user clicked");
-              $('#deleteModal').modal('hide');
+        $('#deleteModal').modal('show');
+        $('#confirmDeleteBtn').click(function(){
+            //resolve("user clicked");
+        $('#deleteModal').modal('hide');
 
-            fetch('/delete/'+id+'/', {
-                    method: 'GET',
-                    //body: formData
-                    //body: JSON.stringify({'a':1})
-            })
-            .then(response => {
-            // Handle response from server
-                if (response.ok) {
-                  // Modal can be closed or other actions can be taken
+        fetch('/removeshare/'+type+'/'+id+'/', {
+                method: 'GET',
+                //body: formData
+                //body: JSON.stringify({'a':1})
+        })
+        .then(response => {
+        // Handle response from server
+            if (response.ok) {
+              // Modal can be closed or other actions can be taken
 
-                    $('#success_alert').show();
-                    $('#success_detail').text("Your Credential have been deleted.");
-                     setTimeout(function() {$('#success_alert').hide();window.location.reload();}, 2000); // 2 seconds
+                $('#success_alert').show();
+                $('#success_detail').text("Your sharing have been removed.");
+                 setTimeout(function() {$('#success_alert').hide();window.location.reload();}, 2000); // 2 seconds
 
-                    console.log('Deletion success');
-                } else {
-                  console.error('Deletion failed,no response');
-                }
-            })
-       })
-    })
- }
-
-  async function uploadQRCode() {
-            const fileInput = document.getElementById('qrcode-file');
-            const file = fileInput.files[0];
-            if (file) {
-                const formData = new FormData();
-                formData.append('image_data',  await convertImageToBase64(file));
-                const response =  await fetch('{% url "read_qrcode" %}', {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await response.json();
-                if (data.qrcode) {
-                    //document.getElementById('new-otp-key').textContent = `QR Code data: ${data.data}`;
-                    $('#new-otp-key').val(data.qrcode);
-
-                    $('#success_alert').show();
-                    $('#success_detail').text("Found Secret Code From Upload Image.");
-                     setTimeout(function() {$('#success_alert').hide();}, 2000); // 2 seconds
-
-                } else {
-                    $('#new-otp-key').val("No QR Code data found.");
-                    //document.getElementById('new-otp-key').textContent = 'No QR Code data found.';
-                }
+                console.log('Deletion success');
             } else {
                 $('#fail_alert').show();
-                $('#fail_detail').text("No Secret Code found From Upload Image, please upload another image.");
+                $('#fail_detail').text("Deletion failed,no response.");
                 setTimeout(function() {$('#fail_alert').hide();}, 2000); // 2 seconds
-
+                console.error('Deletion failed,no response');
             }
+        })
+       })
+    })
 }
 
-       async  function convertImageToBase64(file) {
-            return new Promise((resolve, reject) => {
-                const fileReader = new FileReader();
-                fileReader.onload = () => resolve(fileReader.result.split(',')[1]);
-                fileReader.onerror = (error) => reject(error);
-                fileReader.readAsDataURL(file);
-            });
-        }
-
-
-
-
-
-document.getElementById("savenewclose").addEventListener('click', function() {
-    $("#new-app-name").val('');
-    $("#new-url").val('');
-    $("#new-username").val('');
-    $("#new-password").val('');
-    $("#qrcode-file").val('');
-    $("#new-otp-key").val('');
-})
-
-document.getElementById("savenewbutton").addEventListener('click', function() {
-    var new_app_name = $("#new-app-name").val();
-    var new_url = $("#new-url").val();
-    var new_username = $("#new-username").val();
-    var new_password = $("#new-password").val();
-    var new_otp_key = $("#new-otp-key").val();
-      // Send AJAX request
-    fetch('/add/', {
-        method: 'POST',
-        //body: formData
-        //body: JSON.stringify({'a':1})
-        body: JSON.stringify({app_name:new_app_name, app_url: new_url,app_username:new_username,app_password:new_password,app_two_fa:new_otp_key})
-    })
-    .then(response => {
-    // Handle response from server
-        if (response.ok) {
-          // Modal can be closed or other actions can be taken
-            $("#new-app-name").val('');
-            $("#new-url").val('');
-            $("#new-username").val('');
-            $("#new-password").val('');
-            $("#qrcode-file").val('');
-            $("#new-otp-key").val('');
-            $('#basicModal').modal('hide');
-
-
-            $('#success_alert').show();
-            $('#success_detail').text("Your Credential have been saved.");
-            setTimeout(function() {$('#success_alert').hide();window.location.reload();}, 2000); // 2 seconds
-
-
-          console.log('Credentials submitted successfully');
-        } else {
-          console.error('Error submitting credentials');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-
-  });
 
 // 选择所有按钮元素和输入框元素
     var otpbuttons = document.querySelectorAll('.otp-button');
@@ -355,12 +211,12 @@ document.getElementById("savenewbutton").addEventListener('click', function() {
       // 添加点击事件监听器
       button.addEventListener('click', function() {
           var ctd=30;
-        // 如果按钮颜色为蓝色,将其改为红色并显示输入框
         if (!isclick) {
           this.classList.add('disabled');
           fetch('/api/get_otp/'+otpinputs[index].id+'/')
             .then(response => response.json())
             .then(data => {
+              //otpinputs[index].removeAttribute('disabled');
               otpinputs[index].value = data.otp;
               ctd= data.rtime;
               //inputs[index].classList.remove('disabled');
@@ -370,24 +226,22 @@ document.getElementById("savenewbutton").addEventListener('click', function() {
             });
           isclick = true;
 
-          // 启动定时器,30 秒后将按钮颜色改回蓝色并隐藏输入框
           timerId = setInterval(function() {
               this.textContent=ctd;
               ctd--;
               if (ctd < 0){
                   this.classList.remove('disabled');
                   otpinputs[index].value='';
+                  //otpinputs[index].setAttribute('disabled');
                   this.textContent="Refresh";
                   //inputs[index].classList.add('disabled');
                   isclick = false;
                   clearInterval(timerId);
               }
-
           }.bind(this), 1000);
-        }
-
-      });
+      }
     });
+});
 
 
 </script>

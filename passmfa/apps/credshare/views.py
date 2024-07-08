@@ -10,7 +10,7 @@ from web_project.template_helpers.theme import TemplateHelper
 from .models import AppCredentials
 from .forms import AppCredentialsForm, ShareCredentialsForm
 
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login,logout
 from django.contrib import messages
 from apps.authentication.views import AuthView
 
@@ -23,6 +23,13 @@ from django.http import JsonResponse
 from PIL import Image
 from pyzbar.pyzbar import decode
 import base64
+
+@csrf_exempt
+def userlogout(request):
+    # 假设我们有一个函数 `get_credential_by_id` 来获取凭据对象
+    logout(request)
+    return redirect("/login")
+
 
 
 class LoginView(AuthView):
@@ -205,9 +212,22 @@ class SharetomeView(TemplateView):
         #shared_credentials = AppCredentials.objects.filter(shared_with_users=self.request.user) | AppCredentials.objects.filter(shared_with_groups__in=self.request.user.groups.all()).distinct()
 
         shared_tome_credentials = AppCredentials.objects.filter(shared_with_users=self.request.user)
+
+        credentials_with_groups = []
+        groups = self.request.user.groups.all()
+        for group in groups:
+            print(group.name)
+            credentials = AppCredentials.objects.filter(shared_with_groups = group).distinct()
+            if credentials.exists():
+                for credential in credentials:
+                    print(credential)
+                    credentials_with_groups.append({
+                        'credential': credential,
+                        'group': group
+                    })
+        print(credentials_with_groups)
+        '''     
         shared_togroup_credentials = AppCredentials.objects.filter(shared_with_groups__in=self.request.user.groups.all()).distinct()
-
-
         # Prepare a list with credentials and their corresponding groups
         credentials_with_groups = []
         for credential in shared_togroup_credentials:
@@ -218,10 +238,10 @@ class SharetomeView(TemplateView):
                     'credential': credential,
                     'group': group
                 })
-
+        '''
         for credential in shared_tome_credentials:
             print(credential)
-        for credential in shared_togroup_credentials:
+        for credential in credentials_with_groups:
             print(credential)
 
 
@@ -251,6 +271,17 @@ class SharetomeView(TemplateView):
         return self.render_to_response(self.get_context_data(**kwargs))
 '''
 
+@csrf_exempt
+def removeshare_credentials(request,type,id):
+    if request.method == 'GET':
+        #now only support 1-1 share deletion, not support  1-gourp deletion
+        if type ==0:
+            credential = AppCredentials.objects.get(app_owner=request.user, id=id)
+            credential.shared_with_users.remove(request.user)
+            credential.save()
+            return JsonResponse({'success': True, 'message': 'Share delete successfully'})
+        else:
+            return JsonResponse({'error': 'Invalid data'}, status=400)
 
 @csrf_exempt
 def delete_credentials(request, id):
@@ -273,8 +304,7 @@ def getshare_credentials(request, id):
         shared_tome_credentials = AppCredentials.objects.filter(shared_with_users=request.user)
         shared_togroup_credentials =  AppCredentials.objects.filter(shared_with_groups__in= request.user.groups.all()).distinct()
 
-        if credentials:
-            return JsonResponse({'success': True, 'message': 'Data delete successfully'})
+        return JsonResponse({'success': True, 'message': 'Data delete successfully'})
 
     pass
 
