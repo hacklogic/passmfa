@@ -290,7 +290,7 @@ function share_cred(id){
                      //resolve("user clicked");
                      $('#shareModal').modal('hide');
 
-                     fetch('/confirmshare/'+id+'/', {
+                     fetch('/addshare/'+id+'/', {
                             method: 'GET',
                      })
                      .then(response => {

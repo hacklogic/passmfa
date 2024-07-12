@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import LoginView,IndexView,get_otp,userlogout
-from .views import credentials_list, add_credentials, edit_credentials, delete_credentials,read_qrcode,confirmshare_credentials,SharetomeView,getshare_credentials,removeshare_credentials
+from .views import LoginView,IndexView,get_otp,userlogout,NewView
+from .views import credentials_list, add_credentials, edit_credentials, delete_credentials,read_qrcode,addshare_credentials,SharetomeView,getshare_credentials,delshare_credentials
 
 
 
@@ -19,16 +19,19 @@ urlpatterns = [
 
     path('read-qrcode/', read_qrcode, name='read_qrcode'),
 
+    path("new/",NewView.as_view(template_name="new.html"),name='new'),
+
     path('list/', credentials_list, name='credentials_list'),
     path('add/', add_credentials, name='add_credentials'),
     path('edit/<int:id>/', edit_credentials, name='edit_credentials'),
     path('delete/<int:id>/', delete_credentials, name='delete_credentials'),
+    #add new share
+    path('addshare/<int:id>/', addshare_credentials, name='addshare_credentials'),
 
-    path('confirmshare/<int:id>/', confirmshare_credentials, name='confirmshare_credentials'),
-    path('removeshare/<int:type>/<int:id>/', removeshare_credentials, name='removeshare_credentials'),
-
-
-    path('getshare/<int:id>/', getshare_credentials, name='getshare_credentials'),
+    #delete share
+    path('delshare/<int:type>/<int:id>/', delshare_credentials, name='delshare_credentials'),
+    #path('getshare/<int:id>/', getshare_credentials, name='getshare_credentials'),
+    #get shared credentials
     path('share/', SharetomeView.as_view(template_name="sharetome.html"),name='sharetome'),
     #path("register/",ProfileView.as_view(template_name="profile.html"),),
 

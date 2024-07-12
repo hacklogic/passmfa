@@ -1,0 +1,128 @@
+{% extends layout_path %}
+
+{% load static %}
+{% load i18n %}
+
+
+{% block title %}Vertical Layouts - Forms{% endblock %}
+
+
+
+{% block page_js %}
+{{ block.super }}
+
+  <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+<script src="{% static 'js/ui-modals.js' %}"></script>
+{% endblock page_js %}
+
+
+{% block content %}
+<h4 class="py-3 mb-4">
+  <span class="text-muted fw-light">Create New Credential</span>
+</h4>
+
+
+<!-- Basic Layout -->
+<div class="row">
+  <div class="col-md-8" >
+    <div class="card mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Credential</h5>
+      </div>
+      <div class="card-body">
+        <div >
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label" for="nameBasic">App Name</label>
+            <input type="text" class="form-control" id="new-app-name" placeholder="facebook" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="nameBasic">App URL</label>
+            <input type="text" class="form-control" id="new-app-url" placeholder="http://login.facebook.com" />
+          </div>
+
+            <div class="mb-3">
+            <label class="form-label" for="nameBasic">App Username</label>
+            <input type="text" class="form-control" id="new-app-username" placeholder="Tom" />
+          </div>
+
+            <div class="mb-3">
+            <label class="form-label" for="pwdBasic">App Password</label>
+            <input type="text" class="form-control" id="new-app-password" placeholder="123456" />
+          </div>
+
+
+<div class="mb-3">
+    <label class="form-label" for="pwdBasic">Upload QR picture</label>
+<div  class="dropzone needsclick" id="dropzone-basic">
+  <div class="dz-message needsclick">
+    Drop files here or click to upload
+    <span class="note needsclick">(This is just a demo dropzone. Selected files are <span class="fw-medium">not</span> actually uploaded.)</span>
+  </div>
+  <div class="fallback">
+    <input name="file" type="file" />
+  </div>
+</div>
+ </div>
+
+
+
+        <div class="mb-3">
+            <label class="form-label" for="nameBasic">OTP SECRET KEY</label>
+            <input type="text" class="form-control" id="new-otp-key" placeholder="JBSWY3DPEHPK3PXP or 'otpauth://totp/App:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=App'" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="basic-default-message">Note</label>
+            <textarea id="basic-default-message" class="form-control" placeholder="Hi, Do you have a moment to talk Joe?"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Send</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+
+  <script>
+
+   Dropzone.autoDiscover = false;
+
+            // Initialize Dropzone
+            var myDropzone = new Dropzone("#dropzone-basic", {
+                url: "/read-qrcode/", // Django backend upload URL
+                parallelUploads: 1,
+                uploadMultiple:false,
+                clickable:true,
+                //disablePreviews:true,
+
+                addRemoveLinks: true,
+                autoProcessQueue: true, // Automatically upload the file when dropped
+                maxFiles: 1,
+                maxFilesize: 10, // Maximum file size in MB
+                acceptedFiles: "image/*", // Only accept images
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}' // Add CSRF token for Django
+                },
+                init: function() {
+                    this.on("addedfile", function(file) {
+                        console.log("File added:", file);
+                        //this.removeFile(file);
+                    });
+                    this.on("success", function(file, response) {
+                        console.log("File uploaded successfully:", response);
+                        alert('Decoded content: ' + JSON.stringify(response.status));
+                        alert('Decoded content: ' + JSON.stringify(response.qrcode));
+                    });
+                    this.on("error", function(file, response) {
+                        console.error("Error uploading QR picture");
+                    });
+                }
+            });
+
+
+    </script>
+
+{% endblock %}

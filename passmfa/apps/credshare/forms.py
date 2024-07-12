@@ -10,6 +10,9 @@ class AppCredentialsForm(forms.ModelForm):
         #    'app_two_fa': forms.PasswordInput(),
         #}
 
+class UploadFileForm(forms.Form):
+    file = forms.FileField()
+
 class ShareCredentialsForm(forms.ModelForm):
     class Meta:
         model = AppCredentials

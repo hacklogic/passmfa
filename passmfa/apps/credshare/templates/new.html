@@ -1,0 +1,116 @@
+{% extends layout_path %}
+
+{% load static %}
+{% load i18n %}
+
+
+{% block title %}Vertical Layouts - Forms{% endblock %}
+
+
+
+{% block page_js %}
+{{ block.super }}
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js"></script>
+<script src="{% static 'js/ui-modals.js' %}"></script>
+{% endblock page_js %}
+
+
+{% block content %}
+<h4 class="py-3 mb-4">
+  <span class="text-muted fw-light">Create New Credential</span>
+</h4>
+
+
+<!-- Basic Layout -->
+<div class="row">
+  <div class="col-md-8" >
+    <div class="card mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Credential</h5>
+      </div>
+      <div class="card-body">
+        <div >
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label" for="nameBasic">App Name</label>
+            <input type="text" class="form-control" id="new-app-name" placeholder="facebook" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="nameBasic">App URL</label>
+            <input type="text" class="form-control" id="new-app-url" placeholder="http://login.facebook.com" />
+          </div>
+
+            <div class="mb-3">
+            <label class="form-label" for="nameBasic">App Username</label>
+            <input type="text" class="form-control" id="new-app-username" placeholder="Tom" />
+          </div>
+
+            <div class="mb-3">
+            <label class="form-label" for="pwdBasic">App Password</label>
+            <input type="text" class="form-control" id="new-app-password" placeholder="123456" />
+          </div>
+
+
+<div class="mb-3">
+    <label class="form-label" for="pwdBasic">Upload QR picture</label>
+<div id="my-dropzone" class="dropzone">
+        <div class="dz-message">Drag and drop a picture here to upload</div>
+    </div>
+ </div>
+
+
+
+        <div class="mb-3">
+            <label class="form-label" for="nameBasic">OTP SECRET KEY</label>
+            <input type="text" class="form-control" id="new-otp-key" placeholder="JBSWY3DPEHPK3PXP or 'otpauth://totp/App:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=App'" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="basic-default-message">Note</label>
+            <textarea id="basic-default-message" class="form-control" placeholder="Hi, Do you have a moment to talk Joe?"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Send</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+        $(document).ready(function() {
+            // Disable auto discover for all elements
+            Dropzone.autoDiscover = false;
+
+            // Initialize Dropzone
+            var myDropzone = new Dropzone("#my-dropzone", {
+                url: "/upload/", // Django backend upload URL
+                autoProcessQueue: true, // Automatically upload the file when dropped
+                maxFilesize: 2, // Maximum file size in MB
+                acceptedFiles: "image/*", // Only accept images
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}' // Add CSRF token for Django
+                },
+                init: function() {
+                    this.on("addedfile", function(file) {
+                        console.log("File added:", file);
+                    });
+                    this.on("success", function(file, response) {
+                        console.log("File uploaded successfully:", response);
+                        if (response.error) {
+                            alert('Error: ' + response.error);
+                        } else {
+                            alert('Decoded content: ' + JSON.stringify(response.results));
+                        }
+                    });
+                    this.on("error", function(file, errorMessage) {
+                        console.error("Error uploading file:", errorMessage);
+                    });
+                }
+            });
+        });
+    </script>
+
+{% endblock %}

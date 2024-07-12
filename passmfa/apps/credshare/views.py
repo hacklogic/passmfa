@@ -13,6 +13,7 @@ from .forms import AppCredentialsForm, ShareCredentialsForm
 from django.contrib.auth import authenticate, login,logout
 from django.contrib import messages
 from apps.authentication.views import AuthView
+from .forms import UploadFileForm
 
 
 import pyotp, datetime,io
@@ -26,7 +27,6 @@ import base64
 
 @csrf_exempt
 def userlogout(request):
-    # 假设我们有一个函数 `get_credential_by_id` 来获取凭据对象
     logout(request)
     return redirect("/login")
 
@@ -101,6 +101,22 @@ class IndexView(TemplateView):
 
             #context['shared_credentials']=shared_credentials
         return context
+
+
+class NewView(TemplateView):
+    template_name = 'auth_login_basic.html'
+
+    def get_context_data(self, **kwargs):
+        #context = super().get_context_data(**kwargs)
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        if self.request.user.is_authenticated:
+            credentials = AppCredentials.objects.filter(app_owner=self.request.user)
+            #shared_credentials = AppCredentials.objects.filter(shared_with_users=self.request.user) | AppCredentials.objects.filter(shared_with_groups__in=self.request.user.groups.all()).distinct()
+
+            context['credentials']=credentials
+
+            #context['shared_credentials']=shared_credentials
+        return context
 @login_required
 def get_otp(request, credential_id):
     # 假设我们有一个函数 `get_credential_by_id` 来获取凭据对象
@@ -127,10 +143,6 @@ def get_otp(request, credential_id):
             #return JsonResponse({"otp": "error"})
 
 
-
-
-
-
 def credentials_list(request):
     credentials = AppCredentials.objects.filter(app_owner=request.user)
     #shared_credentials = AppCredentials.objects.filter(shared_with_users=request.user) | AppCredentials.objects.filter(shared_with_groups__in=request.user.groups.all()).distinct()
@@ -138,9 +150,25 @@ def credentials_list(request):
     return render(request, 'credentials_list.html',{'credentials': credentials})
 
 
-@csrf_exempt
 def read_qrcode(request):
-    #print(list(request.POST.items()))
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            file = form.cleaned_data['file']
+            image = Image.open(file)
+
+            qrcode_data = decode(image)
+            if qrcode_data:
+                qr = qrcode_data[0].data.decode('utf-8')
+                #print(qr)
+                return JsonResponse({'status':'1','qrcode': qr})
+            else:
+                return JsonResponse({'status':'0','qrcode': 'No QR code found'})
+    return JsonResponse({'error': 'No image data provided'})
+
+@csrf_exempt
+def read_qrcode_bak(request):
+
     if request.method == 'POST':
         image_data = request.POST.get('image_data')
         #print(image_data)
@@ -154,11 +182,11 @@ def read_qrcode(request):
             qrcode_data = decode(image)
             if qrcode_data:
                 qr = qrcode_data[0].data.decode('utf-8')
-                print(qr)
-                return JsonResponse({'qrcode': qr})
+                #print(qr)
+                return JsonResponse({'status':'1','qrcode': qr})
             else:
-                return None
-    return JsonResponse({'error': 'No image data provided'}, status=400)
+                return JsonResponse({'status':'0','qrcode': 'No QR code found'})
+    return JsonResponse({'error': 'Invalid request method'})
 
 
 
@@ -271,17 +299,6 @@ class SharetomeView(TemplateView):
         return self.render_to_response(self.get_context_data(**kwargs))
 '''
 
-@csrf_exempt
-def removeshare_credentials(request,type,id):
-    if request.method == 'GET':
-        #now only support 1-1 share deletion, not support  1-gourp deletion
-        if type ==0:
-            credential = AppCredentials.objects.get(app_owner=request.user, id=id)
-            credential.shared_with_users.remove(request.user)
-            credential.save()
-            return JsonResponse({'success': True, 'message': 'Share delete successfully'})
-        else:
-            return JsonResponse({'error': 'Invalid data'}, status=400)
 
 @csrf_exempt
 def delete_credentials(request, id):
@@ -310,7 +327,7 @@ def getshare_credentials(request, id):
 
 
 @csrf_exempt
-def confirmshare_credentials(request, id):
+def addshare_credentials(request, id):
     if request.method == 'GET':
         credentials = AppCredentials.objects.get(app_owner=request.user, id=id)
         if credentials:
@@ -330,3 +347,16 @@ def confirmshare_credentials(request, id):
     else:
         form = ShareCredentialsForm(instance=credentials)
     return render(request, 'share_credentials.html', {'form': form})
+
+
+@csrf_exempt
+def delshare_credentials(request,type,id):
+    if request.method == 'GET':
+        #now only support 1-1 share deletion, not support  1-gourp deletion
+        if type ==0:
+            credential = AppCredentials.objects.get(app_owner=request.user, id=id)
+            credential.shared_with_users.remove(request.user)
+            credential.save()
+            return JsonResponse({'success': True, 'message': 'Share delete successfully'})
+        else:
+            return JsonResponse({'error': 'Invalid data'}, status=400)
