@@ -17,7 +17,7 @@ urlpatterns = [
     path("login/",LoginView.as_view(template_name="login.html"),name='login'),
     path("logout/",userlogout,name='userlogout'),
 
-    path('read-qrcode/', read_qrcode, name='read_qrcode'),
+    path('qrcode/', read_qrcode, name='read_qrcode'),
 
     path("new/",NewView.as_view(template_name="new.html"),name='new'),
 

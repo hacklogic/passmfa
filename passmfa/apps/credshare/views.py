@@ -149,10 +149,11 @@ def credentials_list(request):
     #return render(request, 'credentials_list.html', {'credentials': credentials, 'shared_credentials': shared_credentials})
     return render(request, 'credentials_list.html',{'credentials': credentials})
 
-
+@csrf_exempt
 def read_qrcode(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
+        #print(form)
         if form.is_valid():
             file = form.cleaned_data['file']
             image = Image.open(file)
@@ -160,7 +161,7 @@ def read_qrcode(request):
             qrcode_data = decode(image)
             if qrcode_data:
                 qr = qrcode_data[0].data.decode('utf-8')
-                #print(qr)
+                print(qr)
                 return JsonResponse({'status':'1','qrcode': qr})
             else:
                 return JsonResponse({'status':'0','qrcode': 'No QR code found'})
