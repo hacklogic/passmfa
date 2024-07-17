@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import LoginView,IndexView,get_otp,userlogout,NewView
-from .views import credentials_list, add_credentials, edit_credentials, delete_credentials,read_qrcode,addshare_credentials,SharetomeView,getshare_credentials,delshare_credentials
+from .views import credentials_list, add_credentials, edit_credentials, delete_credentials,qrcode,addshare_credentials,SharetomeView,getshare_credentials,delshare_credentials
 
 
 
@@ -17,7 +17,7 @@ urlpatterns = [
     path("login/",LoginView.as_view(template_name="login.html"),name='login'),
     path("logout/",userlogout,name='userlogout'),
 
-    path('qrcode/', read_qrcode, name='read_qrcode'),
+    path('qrcode/', qrcode, name='qrcode'),
 
     path("new/",NewView.as_view(template_name="new.html"),name='new'),
 

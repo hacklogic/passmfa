@@ -23,7 +23,7 @@
         <small class="text-light fw-medium">Default</small>
         <div class="mt-3">
           <!-- Button trigger modal -->
-          <button type="button" class="btn btn-primary" id="toNewButton">
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#basicModal">
               New Credentials
           </button>
 
@@ -338,9 +338,49 @@ function delete_cred(id) {
     })
  }
 
-document.getElementById('toNewButton').addEventListener('click', function() {
-      window.location.href = '/new/';
- });
+  async function uploadQRCode() {
+            const fileInput = document.getElementById('qrcode-file');
+            const file = fileInput.files[0];
+            if (file) {
+                const formData = new FormData();
+                formData.append('image_data',  await convertImageToBase64(file));
+                const response =  await fetch('{% url "read_qrcode" %}', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.qrcode) {
+                    //document.getElementById('new-otp-key').textContent = `QR Code data: ${data.data}`;
+                    $('#new-otp-key').val(data.qrcode);
+
+                    $('#success_alert').show();
+                    $('#success_detail').text("Found Secret Code From Upload Image.");
+                     setTimeout(function() {$('#success_alert').hide();}, 2000); // 2 seconds
+
+                } else {
+                    $('#new-otp-key').val("No QR Code data found.");
+                    //document.getElementById('new-otp-key').textContent = 'No QR Code data found.';
+                }
+            } else {
+                $('#fail_alert').show();
+                $('#fail_detail').text("No Secret Code found From Upload Image, please upload another image.");
+                setTimeout(function() {$('#fail_alert').hide();}, 2000); // 2 seconds
+
+            }
+}
+
+       async  function convertImageToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const fileReader = new FileReader();
+                fileReader.onload = () => resolve(fileReader.result.split(',')[1]);
+                fileReader.onerror = (error) => reject(error);
+                fileReader.readAsDataURL(file);
+            });
+        }
+
+
+
+
 
 document.getElementById("savenewclose").addEventListener('click', function() {
     $("#new-app-name").val('');

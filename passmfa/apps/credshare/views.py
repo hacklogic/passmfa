@@ -30,8 +30,6 @@ def userlogout(request):
     logout(request)
     return redirect("/login")
 
-
-
 class LoginView(AuthView):
     #template_name = 'login.html'
 
@@ -87,36 +85,54 @@ class IndexView2(TemplateView):
         #context = super().get_context_data(**kwargs)
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
         return context
+
 class IndexView(TemplateView):
     template_name = 'auth_login_basic.html'
-
     def get_context_data(self, **kwargs):
         #context = super().get_context_data(**kwargs)
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
         if self.request.user.is_authenticated:
             credentials = AppCredentials.objects.filter(app_owner=self.request.user)
             #shared_credentials = AppCredentials.objects.filter(shared_with_users=self.request.user) | AppCredentials.objects.filter(shared_with_groups__in=self.request.user.groups.all()).distinct()
-
             context['credentials']=credentials
-
             #context['shared_credentials']=shared_credentials
         return context
 
 
 class NewView(TemplateView):
-    template_name = 'auth_login_basic.html'
+
+    template_name = 'new.html'
+
 
     def get_context_data(self, **kwargs):
+        form = AppCredentialsForm()
         #context = super().get_context_data(**kwargs)
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
-        if self.request.user.is_authenticated:
-            credentials = AppCredentials.objects.filter(app_owner=self.request.user)
-            #shared_credentials = AppCredentials.objects.filter(shared_with_users=self.request.user) | AppCredentials.objects.filter(shared_with_groups__in=self.request.user.groups.all()).distinct()
 
-            context['credentials']=credentials
+        #if self.request.user.is_authenticated:
+        #    credentials = AppCredentials.objects.filter(app_owner=self.request.user)
+            #shared_credentials = AppCredentials.objects.filter(shared_with_users=self.request.user) | AppCredentials.objects.filter(shared_with_groups__in=self.request.user.groups.all()).distinct()
+        context['form'] = form
 
             #context['shared_credentials']=shared_credentials
         return context
+    def post(self, request):
+        print('--------------------------')
+        print(request.POST)
+        if request.method == 'POST':
+            form = AppCredentialsForm(request.POST)
+            if form.is_valid():
+                app_credentials = form.save(commit=False)
+                app_credentials.app_owner = request.user
+                app_credentials.save()
+                form.save_m2m()
+                # form.save()
+                return JsonResponse({'message': 'App credentials created successfully'}, status=201)
+            else:
+                return JsonResponse({'errors': form.errors}, status=400)
+
+
+
 @login_required
 def get_otp(request, credential_id):
     # 假设我们有一个函数 `get_credential_by_id` 来获取凭据对象
@@ -150,6 +166,23 @@ def credentials_list(request):
     return render(request, 'credentials_list.html',{'credentials': credentials})
 
 @csrf_exempt
+def qrcode(request):
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        #print(form)
+        if form.is_valid():
+            file = form.cleaned_data['file']
+            image = Image.open(file)
+            qrcode_data = decode(image)
+            if qrcode_data:
+                qr = qrcode_data[0].data.decode('utf-8')
+                #print(qr)
+                return JsonResponse({'code':'1','qrcode': qr})
+            else:
+                return JsonResponse({'code':'0','qrcode': 'No QR code found'})
+    return JsonResponse({'error': 'No image data provided'})
+
+@csrf_exempt
 def read_qrcode(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
@@ -161,7 +194,7 @@ def read_qrcode(request):
             qrcode_data = decode(image)
             if qrcode_data:
                 qr = qrcode_data[0].data.decode('utf-8')
-                print(qr)
+                #print(qr)
                 return JsonResponse({'status':'1','qrcode': qr})
             else:
                 return JsonResponse({'status':'0','qrcode': 'No QR code found'})
@@ -191,6 +224,22 @@ def read_qrcode_bak(request):
 
 
 
+@csrf_exempt
+def create_app_credentials(request):
+    if request.method == 'POST':
+        form = AppCredentialsForm(request.POST)
+        if form.is_valid():
+            app_credentials = form.save(commit=False)
+            app_credentials.app_owner = request.user
+            app_credentials.save()
+            form.save_m2m()
+            #form.save()
+            return JsonResponse({'message': 'App credentials created successfully'}, status=201)
+        else:
+            return JsonResponse({'errors': form.errors}, status=400)
+    else:
+        form = AppCredentialsForm()
+        return render(request, 'new.html', {'form': form})
 
 @csrf_exempt
 def add_credentials(request):
