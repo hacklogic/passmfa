@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import LoginView,IndexView,get_otp,userlogout,NewView
+from .views import LoginView,IndexView,get_otp,userlogout,NewView,EditView,testView
 from .views import credentials_list, add_credentials, edit_credentials, delete_credentials,qrcode,addshare_credentials,SharetomeView,getshare_credentials,delshare_credentials
 
 
@@ -20,6 +20,7 @@ urlpatterns = [
     path('qrcode/', qrcode, name='qrcode'),
 
     path("new/",NewView.as_view(template_name="new.html"),name='new'),
+    path("ed/<int:id>/",EditView.as_view(template_name="edit.html"),name='edit'),
 
     path('list/', credentials_list, name='credentials_list'),
     path('add/', add_credentials, name='add_credentials'),
@@ -34,5 +35,6 @@ urlpatterns = [
     #get shared credentials
     path('share/', SharetomeView.as_view(template_name="sharetome.html"),name='sharetome'),
     #path("register/",ProfileView.as_view(template_name="profile.html"),),
+    path('404/', testView.as_view(template_name="404.html"),name='404'),
 
 ]

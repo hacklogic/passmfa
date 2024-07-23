@@ -100,10 +100,7 @@ class IndexView(TemplateView):
 
 
 class NewView(TemplateView):
-
     template_name = 'new.html'
-
-
     def get_context_data(self, **kwargs):
         form = AppCredentialsForm()
         #context = super().get_context_data(**kwargs)
@@ -131,6 +128,42 @@ class NewView(TemplateView):
             else:
                 return JsonResponse({'errors': form.errors}, status=400)
 
+class EditView(TemplateView):
+    template_name = 'edit.html'
+    print(id)
+
+    def get(self, request, *args, **kwargs):
+        param_value = kwargs.get('param_name')
+        # 使用 param_value 进行后续操作
+        return  # 返回响应
+
+    def get_context_data(self, **kwargs):
+        form = AppCredentialsForm()
+        #context = super().get_context_data(**kwargs)
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+
+        #if self.request.user.is_authenticated:
+        #    credentials = AppCredentials.objects.filter(app_owner=self.request.user)
+            #shared_credentials = AppCredentials.objects.filter(shared_with_users=self.request.user) | AppCredentials.objects.filter(shared_with_groups__in=self.request.user.groups.all()).distinct()
+        context['form'] = form
+
+            #context['shared_credentials']=shared_credentials
+        return context
+    def post(self, request, *args, **kwargs):
+        param_value = kwargs.get('param_name')
+        print('--------------------------')
+        print(request.POST)
+        if request.method == 'POST':
+            form = AppCredentialsForm(request.POST)
+            if form.is_valid():
+                app_credentials = form.save(commit=False)
+                app_credentials.app_owner = request.user
+                app_credentials.save()
+                form.save_m2m()
+                # form.save()
+                return JsonResponse({'message': 'App credentials created successfully'}, status=201)
+            else:
+                return JsonResponse({'errors': form.errors}, status=400)
 
 
 @login_required
@@ -241,6 +274,13 @@ def create_app_credentials(request):
         form = AppCredentialsForm()
         return render(request, 'new.html', {'form': form})
 
+
+class testView(TemplateView):
+    # Predefined function
+    def get_context_data(self, **kwargs):
+        # A function to init the global layout. It is defined in web_project/__init__.py file
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        return context
 @csrf_exempt
 def add_credentials(request):
     if request.method == 'POST':

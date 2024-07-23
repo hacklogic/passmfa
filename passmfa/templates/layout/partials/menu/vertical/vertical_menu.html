@@ -21,12 +21,7 @@
   <div class="menu-inner-shadow"></div>
 
   <ul class="menu-inner py-1">
-<li class="menu-item {% if '/cards/basic/' in request.path %}active{% endif %}">
-      <a href="{% url 'cards-basic' %}" class="menu-link">
-        <i class="menu-icon tf-icons bx bx-home-circle"></i>
-        <div class="text-truncate" data-i18n="Card">Card</div>
-      </a>
-    </li>
+
 
     <li class="menu-item {% if 'index' == request.resolver_match.url_name or '/dashbord/' in request.path %}active open{% endif %}">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
