@@ -47,4 +47,10 @@ credentials.shared_with_users.add(user)
 
 gp = Group.objects.get(id=1)
 credentials.shared_with_groups.add(gp)
+
+python manage.py makemigrations
+python manage.py migrate
+python manage.py createsuperuser
+
+
 '''

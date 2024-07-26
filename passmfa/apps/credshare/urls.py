@@ -25,6 +25,8 @@ urlpatterns = [
     path('list/', credentials_list, name='credentials_list'),
     path('add/', add_credentials, name='add_credentials'),
     path('edit/<int:id>/', edit_credentials, name='edit_credentials'),
+
+
     path('delete/<int:id>/', delete_credentials, name='delete_credentials'),
     #add new share
     path('addshare/<int:id>/', addshare_credentials, name='addshare_credentials'),

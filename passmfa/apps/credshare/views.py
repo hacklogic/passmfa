@@ -108,16 +108,14 @@ class NewView(TemplateView):
 
         #if self.request.user.is_authenticated:
         #    credentials = AppCredentials.objects.filter(app_owner=self.request.user)
-            #shared_credentials = AppCredentials.objects.filter(shared_with_users=self.request.user) | AppCredentials.objects.filter(shared_with_groups__in=self.request.user.groups.all()).distinct()
+            #shared_credentials = AppCredentials.objects.filter(shared_with_users=other_users = User.objects.exclude(id=current_user.id)) | AppCredentials.objects.filter(shared_with_groups__in=self.request.user.groups.all()).distinct()
         #context['form'] = form
-        context['all_users'] = User.objects.all()
+        context['all_users'] = User.objects.exclude(id=self.request.user.id).filter(is_active=True)
         context['all_groups'] = Group.objects.all()
 
             #context['shared_credentials']=shared_credentials
         return context
     def post(self, request):
-        print('--------------------------')
-        print(request.POST)
         if request.method == 'POST':
             form = AppCredentialsForm(request.POST)
             if form.is_valid():
@@ -140,14 +138,10 @@ class NewView(TemplateView):
 
 class EditView(TemplateView):
     template_name = 'edit.html'
-    print(id)
-
-    def get(self, request, *args, **kwargs):
-        param_value = kwargs.get('param_name')
-        # 使用 param_value 进行后续操作
-        return  # 返回响应
-
     def get_context_data(self, **kwargs):
+        cid = kwargs.get('id')
+        credential = AppCredentials.objects.get(app_owner=self.request.user, id=cid)
+        print(app)
         form = AppCredentialsForm()
         #context = super().get_context_data(**kwargs)
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
@@ -155,7 +149,7 @@ class EditView(TemplateView):
         #if self.request.user.is_authenticated:
         #    credentials = AppCredentials.objects.filter(app_owner=self.request.user)
             #shared_credentials = AppCredentials.objects.filter(shared_with_users=self.request.user) | AppCredentials.objects.filter(shared_with_groups__in=self.request.user.groups.all()).distinct()
-        context['form'] = form
+        context['credential'] = credential
 
             #context['shared_credentials']=shared_credentials
         return context

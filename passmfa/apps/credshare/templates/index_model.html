@@ -27,9 +27,6 @@
           <button type="button" class="btn btn-primary" id="toNewButton">
               New Credentials
           </button>
-          <!-- Modal --><!--  modal -->
-        </div>
-    </div>
 
   <div id="success_alert" class="bg-success bs-toast toast toast-placement-ex m-2 top-0 start-50 translate-middle-x" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
   <div class="toast-header">
@@ -41,6 +38,8 @@
   </div>
 </div>
 
+
+
 <div id="fail_alert" class="bg-danger bs-toast toast toast-placement-ex m-2 top-0 start-50 translate-middle-x" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
   <div class="toast-header">
     <i class='bx bx-bell me-2'></i>
@@ -50,6 +49,135 @@
   <div class="toast-body" id="fail_detail">
   </div>
 </div>
+
+
+          <!-- Modal -->
+          <div class="modal fade" id="basicModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel1">Credentials</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                  <div class="row">
+                    <div class="col mb-3">
+                      <label for="nameBasic" class="form-label">App Name</label>
+                      <input type="text" id="new-app-name" class="form-control" >
+                    </div>
+                  </div>
+                    <div class="row">
+                    <div class="col mb-3">
+                      <label for="urlBasic" class="form-label">App URL</label>
+                      <input type="url" id="new-url" class="form-control" >
+                    </div>
+                  </div>
+
+                    <div class="row g-2">
+                    <div class="col mb-0">
+                      <label for="nameBasic" class="form-label">App Username</label>
+                      <input type="text" id="new-username" class="form-control" >
+                    </div>
+                    <div class="col mb-0">
+                      <label for="pwdBasic" class="form-label">App Password</label>
+                      <input type="text" id="new-password" class="form-control">
+                    </div>
+                  </div>
+
+                    <div class="row">
+                    <div class="col mb-3">
+                        <label for="nameBasic" class="form-label">Upload QR Code picture</label>
+                      <div class="input-group">
+                      <input type="file" class="form-control" id="qrcode-file" aria-describedby="inputGroupFileAddon04" aria-label="Upload">
+                      <button onclick="uploadQRCode()" class="btn btn-primary" type="button" id="inputGroupFileAddon04">Upload</button>
+                    </div>
+                    </div>
+                  </div>
+
+
+                    <div class="row">
+                    <div class="col mb-3">
+                      <label for="nameBasic" class="form-label">OTP Secret Key</label>
+                      <input type="text" id="new-otp-key" class="form-control" placeholder="JBSWY3DPEHPK3PXP or 'otpauth://totp/App:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=App'">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" id="savenewclose" >Close</button>
+                  <button type="button" class="btn btn-primary" id="savenewbutton">Save changes</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+            <!--  modal -->
+        </div>
+    </div>
+
+
+
+    <div class="modal fade" id="shareModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel1">Share </h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="row">
+
+
+
+
+
+                   <!-- List group checkbox -->
+      <div class="col-lg-6">
+        <small class="text-light fw-medium">Share Within User</small>
+        <div class="demo-inline-spacing mt-3">
+
+          <div class="container mt-5">
+  <select class="selectpicker" multiple aria-label="size 3 select example" id="userpicker">
+    <option value="1">One</option>
+    <option value="2">Two</option>
+    <option value="3">Three</option>
+    <option value="4">Four</option>
+  </select>
+</div>
+
+        </div>
+      </div>
+      <!--/ List group checkbox -->
+      <!-- List group checkbox -->
+     <div class="col-lg-6">
+        <small class="text-light fw-medium">Share Within Group</small>
+        <div class="demo-inline-spacing mt-3">
+
+          <div class="container mt-5">
+  <select class="selectpicker" multiple aria-label="size 3 select example" id="grouppicker">
+    <option value="1">One</option>
+    <option value="2">Two</option>
+    <option value="3">Three</option>
+    <option value="4">Four</option>
+  </select>
+</div>
+
+        </div>
+      </div>
+      <!--/ List group checkbox -->
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" id="cancelShareBtn">Close</button>
+                  <button type="button" class="btn btn-primary" id ="confirmShareBtn">Confirm</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
 
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -113,15 +241,13 @@
                </div>
         </td>
 
-
-
           <td>
             <div class="dropdown">
               <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
               <div class="dropdown-menu">
 
-                <a class="dropdown-item" href="/edit/{{ credential.id }}"><i class="bx bx-edit-alt me-1"></i> Edit</a>
-
+                <a class="dropdown-item" href="javascript:edit_cred({{ credential.id }});"><i class="bx bx-edit-alt me-1"></i> Edit</a>
+                  <a class="dropdown-item" href="javascript:share_cred({{ credential.id }});"><i class="bx bxs-share-alt me-1"></i> Share</a>
                 <a class="dropdown-item" href="javascript:delete_cred({{ credential.id }});"><i class="bx bx-trash me-1"></i> Delete</a>
               </div>
             </div>
@@ -156,6 +282,33 @@ async function edit_cred(id){
     }
 }
 
+//$('#userpicker').selectpicker();
+//$('#grouppicker').selectpicker();
+function share_cred(id){
+      const modal = new Promise(function(resolve, reject){
+                 $('#shareModal').modal('show');
+
+                 $('#confirmShareBtn').click(function(){
+                     //resolve("user clicked");
+                     $('#shareModal').modal('hide');
+
+                     fetch('/addshare/'+id+'/', {
+                            method: 'GET',
+                     })
+                     .then(response => {
+                        if (response.ok) {
+                          // Modal can be closed or other actions can be taken
+                            $('#success_alert').show();
+                            $('#success_detail').text("New Credentials Have Been Shared.");
+                             setTimeout(function() {$('#success_alert').hide();window.location.reload();}, 2000); // 2 seconds
+                            console.log('Deletion success');
+                        } else {
+                          console.error('Deletion failed,no response');
+                        }
+                     })
+       })
+    })
+ }
 
 function delete_cred(id) {
     const modal = new Promise(function(resolve, reject){
@@ -187,17 +340,60 @@ function delete_cred(id) {
     })
  }
 
-document.getElementById('toEditButton').addEventListener('click', function() {
-      window.location.href = '/edit/';
- });
-
 document.getElementById('toNewButton').addEventListener('click', function() {
       window.location.href = '/new/';
  });
 
+document.getElementById("savenewclose").addEventListener('click', function() {
+    $("#new-app-name").val('');
+    $("#new-url").val('');
+    $("#new-username").val('');
+    $("#new-password").val('');
+    $("#qrcode-file").val('');
+    $("#new-otp-key").val('');
+})
+
+document.getElementById("savenewbutton").addEventListener('click', function() {
+    var new_app_name = $("#new-app-name").val();
+    var new_url = $("#new-url").val();
+    var new_username = $("#new-username").val();
+    var new_password = $("#new-password").val();
+    var new_otp_key = $("#new-otp-key").val();
+      // Send AJAX request
+    fetch('/add/', {
+        method: 'POST',
+        //body: formData
+        //body: JSON.stringify({'a':1})
+        body: JSON.stringify({app_name:new_app_name, app_url: new_url,app_username:new_username,app_password:new_password,app_two_fa:new_otp_key})
+    })
+    .then(response => {
+    // Handle response from server
+        if (response.ok) {
+          // Modal can be closed or other actions can be taken
+            $("#new-app-name").val('');
+            $("#new-url").val('');
+            $("#new-username").val('');
+            $("#new-password").val('');
+            $("#qrcode-file").val('');
+            $("#new-otp-key").val('');
+            $('#basicModal').modal('hide');
 
 
+            $('#success_alert').show();
+            $('#success_detail').text("Your Credential have been saved.");
+            setTimeout(function() {$('#success_alert').hide();window.location.reload();}, 2000); // 2 seconds
 
+
+          console.log('Credentials submitted successfully');
+        } else {
+          console.error('Error submitting credentials');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+
+  });
 
 // 选择所有按钮元素和输入框元素
     var otpbuttons = document.querySelectorAll('.otp-button');
