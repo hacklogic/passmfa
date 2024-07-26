@@ -102,14 +102,16 @@ class IndexView(TemplateView):
 class NewView(TemplateView):
     template_name = 'new.html'
     def get_context_data(self, **kwargs):
-        form = AppCredentialsForm()
+        #form = AppCredentialsForm()
         #context = super().get_context_data(**kwargs)
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
 
         #if self.request.user.is_authenticated:
         #    credentials = AppCredentials.objects.filter(app_owner=self.request.user)
             #shared_credentials = AppCredentials.objects.filter(shared_with_users=self.request.user) | AppCredentials.objects.filter(shared_with_groups__in=self.request.user.groups.all()).distinct()
-        context['form'] = form
+        #context['form'] = form
+        context['all_users'] = User.objects.all()
+        context['all_groups'] = Group.objects.all()
 
             #context['shared_credentials']=shared_credentials
         return context
@@ -122,6 +124,14 @@ class NewView(TemplateView):
                 app_credentials = form.save(commit=False)
                 app_credentials.app_owner = request.user
                 app_credentials.save()
+                if request.POST.getlist('shared_with_users'):
+                    shared_with_users = User.objects.filter(id__in=request.POST.getlist('shared_with_users'))
+                    app_credentials.shared_with_users.set(shared_with_users)
+                    app_credentials.save()
+                if request.POST.getlist('shared_with_groups'):
+                    shared_with_groups = Group.objects.filter(id__in=request.POST.getlist('shared_with_groups'))
+                    app_credentials.shared_with_groups.set(shared_with_groups)
+                    app_credentials.save()
                 form.save_m2m()
                 # form.save()
                 return JsonResponse({'message': 'App credentials created successfully'}, status=201)

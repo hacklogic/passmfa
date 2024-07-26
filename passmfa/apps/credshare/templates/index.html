@@ -217,7 +217,7 @@
         </tr>
       </thead>
       <tbody class="table-border-bottom-0">
-
+    {% if credentials %}
       {% for credential in credentials %}
                 <tr>
                     <td>{{ credential.app_name }}</td>
@@ -254,6 +254,7 @@
           </td>
         </tr>
        {% endfor %}
+      {% endif %}
       </tbody>
     </table>
   </div>
