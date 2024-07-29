@@ -141,7 +141,9 @@ class EditView(TemplateView):
     def get_context_data(self, **kwargs):
         cid = kwargs.get('id')
         credential = AppCredentials.objects.get(app_owner=self.request.user, id=cid)
-        print(app)
+        print(credential.shared_with_users.all())
+        print(credential.shared_with_groups.all())
+
         form = AppCredentialsForm()
         #context = super().get_context_data(**kwargs)
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
@@ -150,6 +152,16 @@ class EditView(TemplateView):
         #    credentials = AppCredentials.objects.filter(app_owner=self.request.user)
             #shared_credentials = AppCredentials.objects.filter(shared_with_users=self.request.user) | AppCredentials.objects.filter(shared_with_groups__in=self.request.user.groups.all()).distinct()
         context['credential'] = credential
+        print(credential.app_note)
+
+        print(credential.shared_with_users.all())
+        print(credential.shared_with_groups.all())
+
+        context['selected_users'] = credential.shared_with_users.all()
+        context['selected_groups'] = credential.shared_with_groups.all()
+
+        context['all_users'] = User.objects.exclude(id=self.request.user.id).filter(is_active=True)
+        context['all_groups'] = Group.objects.all()
 
             #context['shared_credentials']=shared_credentials
         return context
