@@ -166,15 +166,25 @@ class EditView(TemplateView):
             #context['shared_credentials']=shared_credentials
         return context
     def post(self, request, *args, **kwargs):
-        param_value = kwargs.get('param_name')
-        print('--------------------------')
+        cid = kwargs.get('id')
+        print('----------update----------------')
         print(request.POST)
+        credential = AppCredentials.objects.get(app_owner=self.request.user, id=cid)
         if request.method == 'POST':
-            form = AppCredentialsForm(request.POST)
+            form = AppCredentialsForm(request.POST, instance=credential)
             if form.is_valid():
                 app_credentials = form.save(commit=False)
                 app_credentials.app_owner = request.user
                 app_credentials.save()
+                if request.POST.getlist('shared_with_users'):
+                    shared_with_users = User.objects.filter(id__in=request.POST.getlist('shared_with_users'))
+                    app_credentials.shared_with_users.set(shared_with_users)
+                    app_credentials.save()
+                if request.POST.getlist('shared_with_groups'):
+                    shared_with_groups = Group.objects.filter(id__in=request.POST.getlist('shared_with_groups'))
+                    app_credentials.shared_with_groups.set(shared_with_groups)
+                    app_credentials.save()
+
                 form.save_m2m()
                 # form.save()
                 return JsonResponse({'message': 'App credentials created successfully'}, status=201)
