@@ -35,13 +35,16 @@ urlpatterns = [
     path('add/', add_credentials, name='add_credentials'),
     #path('edit/<int:id>/', edit_credentials, name='edit_credentials'),
 
-
+    #删除我的
     path('delete/<int:id>/', delete_credentials, name='delete_credentials'),
+
     #add new share
     path('addshare/<int:id>/', addshare_credentials, name='addshare_credentials'),
 
+    #删除共享
     #delete share
     path('delshare/<int:type>/<int:id>/', delshare_credentials, name='delshare_credentials'),
+
     #path('getshare/<int:id>/', getshare_credentials, name='getshare_credentials'),
     #get shared credentials
     #path("register/",ProfileView.as_view(template_name="profile.html"),),
