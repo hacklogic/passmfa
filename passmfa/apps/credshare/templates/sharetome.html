@@ -73,7 +73,7 @@
 
 
 <div class="card">
-  <h5 class="card-header">Table Basic Share to me</h5>
+  <h5 class="card-header">Share to me</h5>
   <div class="table-responsive text-nowrap">
     <table class="table">
       <thead>
@@ -213,7 +213,7 @@ function remove_share(id,type) {
           var ctd=30;
         if (!isclick) {
           this.classList.add('disabled');
-          fetch('/api/get_otp/'+otpinputs[index].id+'/')
+          fetch('/otp/'+otpinputs[index].id+'/')
             .then(response => response.json())
             .then(data => {
               //otpinputs[index].removeAttribute('disabled');

@@ -210,7 +210,7 @@ document.getElementById('toNewButton').addEventListener('click', function() {
         // 如果按钮颜色为蓝色,将其改为红色并显示输入框
         if (!isclick) {
           this.classList.add('disabled');
-          fetch('/api/get_otp/'+otpinputs[index].id+'/')
+          fetch('/otp/'+otpinputs[index].id+'/')
             .then(response => response.json())
             .then(data => {
               otpinputs[index].value = data.otp;
