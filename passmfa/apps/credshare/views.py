@@ -466,7 +466,7 @@ def addshare_credentials(request, id):
 
 
 @csrf_exempt
-def delshare_credentials(request,type,id):
+def delshare_credentials(request,id):
     if request.method == 'GET':
         #now only support 1-1 share deletion, not support  1-gourp deletion
         if type ==0:

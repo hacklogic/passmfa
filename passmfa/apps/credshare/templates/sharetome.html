@@ -167,14 +167,14 @@
 
 <script type="text/javascript">
 
-function remove_share(id,type) {
+function remove_share(id) {
     const modal = new Promise(function(resolve, reject){
         $('#deleteModal').modal('show');
         $('#confirmDeleteBtn').click(function(){
             //resolve("user clicked");
         $('#deleteModal').modal('hide');
 
-        fetch('/removeshare/'+type+'/'+id+'/', {
+        fetch('/delshare/'+'/'+id+'/', {
                 method: 'GET',
                 //body: formData
                 //body: JSON.stringify({'a':1})
