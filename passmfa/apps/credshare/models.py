@@ -16,6 +16,8 @@ class AppCredentials(models.Model):
     app_note = models.CharField(max_length=3000, blank=True, null=True)
 
     app_owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='apps')
+    admin_with_users = models.ManyToManyField(User, related_name='app_admins', blank=True)
+
     shared_with_users = models.ManyToManyField(User, related_name='shared_apps', blank=True)
     shared_with_groups = models.ManyToManyField(Group, related_name='shared_apps', blank=True)
 

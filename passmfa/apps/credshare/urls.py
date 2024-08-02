@@ -55,6 +55,10 @@ urlpatterns = [
     #404 页面
     path('404/', testView.as_view(template_name="404.html"),name='404'),
 
+    #my profile
+    #edit profile
+
+
 
 
 ]
